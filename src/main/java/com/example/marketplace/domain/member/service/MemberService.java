@@ -19,6 +19,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     *   TODO: dto 마저 작성,
+     *   TODO: 컨트롤러 작성, 마이페이지 작성,
+     *   TODO: changePassword 메서드, addInformationMember 메서드, changeMemberInfo 메서드
+     *   TODO: MemberService 로컬 테스트
+     **/
+
     // 일반 회원가입
     public void createMember(CreateMemberRequestDto dto) {
         // 예외 처리
@@ -57,7 +64,8 @@ public class MemberService {
     public void addInformationMember(AddInformationMemberRequestDto dto) {
         memberRepository.findByLoginId(dto.getLoginId)
                 .orElseThrow(() -> new EntityNotFoundException
-                        ("회원을 찾을 수 없음 LoginId: " + dto.getLoginId));
+                        ("회원을 찾을 수 없음 LoginId: " + dto.getLoginId))
+                .addInformationMember.;(dto);
     }
 
     // 비밀번호 검증 -> 비밀번호 변경
