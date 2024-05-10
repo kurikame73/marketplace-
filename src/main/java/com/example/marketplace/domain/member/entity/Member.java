@@ -1,9 +1,13 @@
 package com.example.marketplace.domain.member.entity;
 
+import com.example.marketplace.domain.member.dto.request.AddInformationMemberRequestDto;
+import com.example.marketplace.domain.member.dto.request.ChangeMemberInfoRequestDto;
+import com.example.marketplace.domain.member.dto.request.ChangePasswordRequestDto;
 import com.example.marketplace.domain.member.dto.request.CreateMemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -79,5 +83,25 @@ public class Member {
         member.email = dto.getEmail();
         member.password = dto.getPassword();
         return member;
+    }
+
+    public void changePassword(ChangePasswordRequestDto dto, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(dto.getNewPassword());
+    }
+
+    public void addInformationMember(AddInformationMemberRequestDto dto) {
+        this.email = dto.getEmail();
+        this.name = dto.getMemberName();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.loginId = dto.getLoginId();
+        // 등등..
+    }
+
+    public void changeMemberInfo(ChangeMemberInfoRequestDto dto) {
+        this.email = dto.getEmail();
+        this.name = dto.getMemberName();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.loginId = dto.getLoginId();
+        // 등등..
     }
 }

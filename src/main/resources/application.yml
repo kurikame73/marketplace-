@@ -7,16 +7,16 @@ spring:
       org.springframework.security: INFO
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/marketplace
+    url: jdbc:postgresql://localhost:5432/zombie
     driver-class-name: org.postgresql.Driver
-    username: postgres
+    username: makisekurisu
     password: abcd1234
 
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
