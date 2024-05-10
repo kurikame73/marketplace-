@@ -246,5 +246,5 @@ class MemberServiceTest {
         // when, then
         assertDoesNotThrow(() -> memberService.verifyLoginId(loginId));
     }
-    // TODO: 카테고리, 아이템 순서로
+    // TODO: 카테고리, 아이템 순서로 카테고리로 아이템 필터 -> 아이템서비스
 }
