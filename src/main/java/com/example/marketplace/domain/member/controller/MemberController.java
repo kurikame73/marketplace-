@@ -2,7 +2,6 @@ package com.example.marketplace.domain.member.controller;
 
 import com.example.marketplace.domain.member.dto.request.*;
 import com.example.marketplace.domain.member.dto.response.GetMemberInfoResponseDto;
-import com.example.marketplace.domain.member.repository.MemberRepository;
 import com.example.marketplace.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

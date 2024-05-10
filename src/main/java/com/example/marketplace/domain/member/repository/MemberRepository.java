@@ -21,5 +21,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "(m.id, m.loginId, m.email, m.name, m.profileImageUrl, m.nickname, m.address, m.gender, m.phoneNumber, m.age) " +
             "FROM Member m WHERE m.loginId = :loginId")
     GetMemberInfoResponseDto findMemberInfoByLoginId(@Param("loginId") String loginId);
-
 }

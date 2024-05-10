@@ -18,14 +18,14 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * TODO: 컨트롤러 작성, 마이페이지 작성,
-     *   TODO: MemberService 로컬 테스트
+     * TODO: 마이페이지 작성,
      **/
 
     // 일반 회원가입
     public void createMember(CreateMemberRequestDto dto) {
         // 예외 처리
         // loginId 검증, email 검증
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         memberRepository.save(Member.createMember(dto));
     }
 
@@ -34,12 +34,11 @@ public class MemberService {
         verifyEmail(dto.getEmail());
         verifyName(dto.getName());
         return memberRepository.findByEmail(dto.getEmail())
-                .map(Member::getEmail).orElse(null);
+                .map(Member::getLoginId).orElse(null);
     }
 
     // 비밀번호 변경
     public void changePassword(ChangePasswordRequestDto dto) {
-        // TODO:  저장추가
         // 비밀번호 검증 끝남, 비밀번호만 바꾸면 됨
         Member toChange = memberRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new EntityNotFoundException
