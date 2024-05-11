@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class Category {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Long id;
 
@@ -33,6 +35,10 @@ public class Category {
 
     public Category(Long id, String categoryName) {
         this.id = id;
+        this.categoryName = categoryName;
+    }
+
+    public Category(String categoryName) {
         this.categoryName = categoryName;
     }
 }

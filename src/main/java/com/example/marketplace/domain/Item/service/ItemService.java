@@ -24,6 +24,7 @@ public class ItemService {
     public Page<ItemDto> findItems(ItemFilterDto itemFilterDto, Pageable pageable) {
         ItemFilter filter = new ItemFilter.ItemFilterBuilder()
                 .categoryId(itemFilterDto.getCategoryId())
+                .categoryName(itemFilterDto.getCategoryName())
                 .itemName(itemFilterDto.getItemName())
                 .minPrice(itemFilterDto.getMinPrice())
                 .maxPrice(itemFilterDto.getMaxPrice())

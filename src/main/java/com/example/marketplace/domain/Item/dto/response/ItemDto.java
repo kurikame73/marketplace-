@@ -24,4 +24,5 @@ public class ItemDto {
     private PromotionType promotionType;
     private Long categoryId; // Category의 id
     private Integer reviewCount; // Review의 개수
+    private String categoryName;
 }

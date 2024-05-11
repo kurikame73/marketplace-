@@ -12,7 +12,9 @@ import com.example.marketplace.domain.config.TestConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
@@ -45,11 +48,20 @@ class ItemServiceTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private EntityManager em;
+
     @BeforeEach
     void setUp() {
-        Category category1 = new Category(1L, "Electronics");
-        Category category2 = new Category(2L, "Clothing");
-        categoryRepository.saveAll(Arrays.asList(category1, category2));
+        Category parentCategory = categoryRepository.save(new Category("Parent Category"));
+
+        Category category1 = new Category("Electronics");
+        category1.setParent(parentCategory);
+        categoryRepository.save(category1);
+
+        Category category2 = new Category("Clothing");
+        category2.setParent(parentCategory);
+        categoryRepository.save(category2);
 
 
         Item item1 = Item.builder()
@@ -89,7 +101,13 @@ class ItemServiceTest {
                 .category(category2)
                 .build();
         itemRepository.save(item4);
+    }
 
+    @AfterEach
+    void tearDown() {
+        itemRepository.deleteAll();
+        categoryRepository.deleteAll();
+        em.clear();
     }
 
     @Test
@@ -98,16 +116,14 @@ class ItemServiceTest {
         ItemFilterDto itemFilterDto = new ItemFilterDto();
         Page<ItemDto> result = itemService.findItems(itemFilterDto, pageable);
 
-        assertEquals(2, result.getTotalElements());
+        assertEquals(4, result.getTotalElements());
     }
 
     @Test
     void findItems_withCategoryFilter() throws JsonProcessingException {
         Pageable pageable = PageRequest.of(0, 10);
-//        ItemFilterDto itemFilterDto = new ItemFilterDto();
-//        itemFilterDto.setCategoryId(category.getId());
         ItemFilterDto itemFilterDto1 = new ItemFilterDto();
-        itemFilterDto1.setCategoryId(1L);
+        itemFilterDto1.setCategoryName("Electronics");
         Page<ItemDto> result = itemService.findItems(itemFilterDto1, pageable);
         ObjectWriter writer = jacksonObjectMapper.writerWithDefaultPrettyPrinter();
         String jsonResult = writer.writeValueAsString(result);
@@ -180,7 +196,7 @@ class ItemServiceTest {
     void findItems_withMultipleFilters() throws JsonProcessingException {
         Pageable pageable = PageRequest.of(0, 10);
         ItemFilterDto itemFilterDto = new ItemFilterDto();
-        itemFilterDto.setCategoryId(2L);
+        itemFilterDto.setCategoryName("Clothing");
         itemFilterDto.setItemName("Jeans");
         itemFilterDto.setMinPrice(3000);
         itemFilterDto.setMaxPrice(5000);
@@ -195,7 +211,7 @@ class ItemServiceTest {
 
         assertEquals(1, result.getTotalElements());
         ItemDto itemDto = result.getContent().get(0);
-        assertEquals(2L, itemDto.getCategoryId());
+        assertEquals("Clothing", itemDto.getCategoryName());
         assertEquals("Jeans", itemDto.getItemName());
         assertEquals(4000, itemDto.getItemPrice());
         assertEquals("Brand B", itemDto.getBrand());

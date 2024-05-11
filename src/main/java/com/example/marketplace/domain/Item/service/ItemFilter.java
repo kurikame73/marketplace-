@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class ItemFilter {
     private Long categoryId;
+    private String categoryName;
     private String itemName;
     private Integer minPrice;
     private Integer maxPrice;
@@ -16,6 +17,7 @@ public class ItemFilter {
 
     public static class ItemFilterBuilder {
         private Long categoryId;
+        private String categoryName;
         private String itemName;
         private Integer minPrice;
         private Integer maxPrice;
@@ -25,6 +27,11 @@ public class ItemFilter {
 
         public ItemFilterBuilder categoryId(Long categoryId) {
             this.categoryId = categoryId;
+            return this;
+        }
+
+        public ItemFilterBuilder categoryName(String categoryName) {
+            this.categoryName = categoryName;
             return this;
         }
 
@@ -61,6 +68,7 @@ public class ItemFilter {
         public ItemFilter build() {
             ItemFilter filter = new ItemFilter();
             filter.categoryId = this.categoryId;
+            filter.categoryName = this.categoryName;
             filter.itemName = this.itemName;
             filter.minPrice = this.minPrice;
             filter.maxPrice = this.maxPrice;

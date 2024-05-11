@@ -5,6 +5,7 @@ import com.example.marketplace.domain.Item.entity.ItemStatus;
 import com.example.marketplace.domain.Item.entity.PromotionType;
 import com.example.marketplace.domain.Item.entity.QItem;
 import com.example.marketplace.domain.Item.service.ItemFilter;
+import com.example.marketplace.domain.category.entity.QCategory;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -24,9 +24,11 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     @Override
     public Page<ItemDto> filteringItem(ItemFilter filter, Pageable pageable) {
         QItem item = QItem.item;
+        QCategory category = QCategory.category;
 
         BooleanBuilder builder = new BooleanBuilder();
         addCategoryFilter(builder, item, filter.getCategoryId());
+        addCategoryNameFilter(builder, category, filter.getCategoryName());
         addNameFilter(builder, item, filter.getItemName());
         addPriceRangeFilter(builder, item, filter.getMinPrice(), filter.getMaxPrice());
         addBrandFilter(builder, item, filter.getBrand());
@@ -46,8 +48,10 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                         item.brand,
                         item.promotionType,
                         item.category.id,
-                        item.reviews.size()))
+                        item.reviews.size(),
+                        item.category.categoryName))
                 .from(item)
+                .join(item.category)
                 .where(builder)
                 .orderBy(item.id.desc())
                 .offset(pageable.getOffset())
@@ -65,6 +69,12 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     private void addCategoryFilter(BooleanBuilder builder, QItem item, Long categoryId) {
         if (categoryId != null) {
             builder.and(item.category.id.eq(categoryId));
+        }
+    }
+
+    private void addCategoryNameFilter(BooleanBuilder builder, QCategory category, String categoryName) {
+        if (categoryName != null) {
+            builder.and(category.categoryName.containsIgnoreCase(categoryName));
         }
     }
 

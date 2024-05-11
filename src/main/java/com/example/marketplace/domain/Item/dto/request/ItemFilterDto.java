@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ItemFilterDto {
     private Long categoryId;
+    private String categoryName;
     private String itemName;
     private Integer minPrice;
     private Integer maxPrice;
