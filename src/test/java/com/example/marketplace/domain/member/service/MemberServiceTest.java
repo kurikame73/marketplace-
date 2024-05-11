@@ -1,5 +1,6 @@
 package com.example.marketplace.domain.member.service;
 
+import com.example.marketplace.domain.config.TestConfig;
 import com.example.marketplace.domain.member.dto.request.*;
 import com.example.marketplace.domain.member.dto.response.GetMemberInfoResponseDto;
 import com.example.marketplace.domain.member.entity.Member;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Import(TestConfig.class)
 class MemberServiceTest {
 
     @Autowired
@@ -33,27 +36,27 @@ class MemberServiceTest {
     @Test
     void createMember() {
         // given
-        CreateMemberRequestDto requestDto = new CreateMemberRequestDto("testName", "testLoginId", "testPassword", "testEmail@test.com");
+        CreateMemberRequestDto requestDto = new CreateMemberRequestDto("testName111", "testLoginId111", "testPassword", "test111Email@test.com");
 
         // when
         memberService.createMember(requestDto);
 
         // then
-        Optional<Member> savedMember = memberRepository.findByLoginId("testLoginId");
+        Optional<Member> savedMember = memberRepository.findByLoginId("testLoginId111");
         assertTrue(savedMember.isPresent());
-        assertEquals("testLoginId", savedMember.get().getLoginId());
-        assertEquals("testName", savedMember.get().getName());
-        assertEquals("testEmail@test.com", savedMember.get().getEmail());
+        assertEquals("testLoginId111", savedMember.get().getLoginId());
+        assertEquals("testName111", savedMember.get().getName());
+        assertEquals("test111Email@test.com", savedMember.get().getEmail());
         assertTrue(passwordEncoder.matches("testPassword", savedMember.get().getPassword()));
     }
 
     @Test
     void findLoginId() {
         // given
-        String email = "test@example.com";
-        String name = "testName";
+        String email = "test31@example.com";
+        String name = "testName31";
         Member member = Member.builder()
-                .loginId("testLoginId")
+                .loginId("testLoginId31")
                 .email(email)
                 .name(name)
                 .build();
@@ -65,13 +68,13 @@ class MemberServiceTest {
         String foundLoginId = memberService.findLoginId(requestDto);
 
         // then
-        assertEquals("testLoginId", foundLoginId);
+        assertEquals("testLoginId31", foundLoginId);
     }
 
     @Test
     void changePassword() {
         // given
-        String loginId = "testLoginId";
+        String loginId = "testLoginId6";
         String oldPassword = "oldPassword";
         String newPassword = "newPassword";
         String name = "name";
@@ -135,9 +138,9 @@ class MemberServiceTest {
     @Test
     void changeMemberInfo() {
         // given
-        String loginId = "testLoginId";
+        String loginId = "testLoginId5";
         String email = "new@example.com";
-        String name = "newName";
+        String name = "newName5";
         String phoneNumber = "01098765432";
         Member member = Member.builder()
                 .loginId(loginId)
@@ -158,7 +161,7 @@ class MemberServiceTest {
         Optional<Member> updatedMember = memberRepository.findByLoginId(loginId);
         assertTrue(updatedMember.isPresent());
         assertEquals("new@example.com", updatedMember.get().getEmail());
-        assertEquals("newName", updatedMember.get().getName());
+        assertEquals("newName5", updatedMember.get().getName());
         assertEquals("01098765432", updatedMember.get().getPhoneNumber());
 
     }
@@ -166,8 +169,8 @@ class MemberServiceTest {
     @Test
     void addInformationMember() {
         // given
-        String loginId = "testLoginId";
-        String email = "test@example.com";
+        String loginId = "testLoginId7";
+        String email = "test7@example.com";
         String name = "testName";
         String phoneNumber = "01012345678";
         Member member = Member.builder()
@@ -185,7 +188,7 @@ class MemberServiceTest {
         // then
         Optional<Member> updatedMember = memberRepository.findByLoginId(loginId);
         assertTrue(updatedMember.isPresent());
-        assertEquals("test@example.com", updatedMember.get().getEmail());
+        assertEquals("test7@example.com", updatedMember.get().getEmail());
         assertEquals("testName", updatedMember.get().getName());
         assertEquals("01012345678", updatedMember.get().getPhoneNumber());
 
@@ -194,7 +197,7 @@ class MemberServiceTest {
     @Test
     void verifyPassword() {
         // given
-        String loginId = "testLoginId";
+        String loginId = "testLoginId11";
         String password = "testPassword";
         Member member = Member.builder()
                 .loginId(loginId)
@@ -211,7 +214,7 @@ class MemberServiceTest {
     @Test
     void verifyName() {
         // given
-        String name = "testName";
+        String name = "testName1";
         Member member = Member.builder()
                 .name(name)
                 .build();
@@ -224,7 +227,7 @@ class MemberServiceTest {
     @Test
     void verifyEmail() {
         // given
-        String email = "test@example.com";
+        String email = "test1@example.com";
         Member member = Member.builder()
                 .email(email)
                 .build();
@@ -237,7 +240,7 @@ class MemberServiceTest {
     @Test
     void verifyLoginId() {
         // given
-        String loginId = "testLoginId";
+        String loginId = "testLoginId1";
         Member member = Member.builder()
                 .loginId(loginId)
                 .build();
@@ -246,5 +249,4 @@ class MemberServiceTest {
         // when, then
         assertDoesNotThrow(() -> memberService.verifyLoginId(loginId));
     }
-    // TODO: 카테고리, 아이템 순서로 카테고리로 아이템 필터 -> 아이템서비스
 }

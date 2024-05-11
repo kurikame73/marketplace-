@@ -2,11 +2,17 @@ package com.example.marketplace.domain.category.entity;
 
 import com.example.marketplace.domain.Item.entity.Item;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Category {
     @Id
     @GeneratedValue
@@ -24,4 +30,9 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Item> items = new ArrayList<>();
+
+    public Category(Long id, String categoryName) {
+        this.id = id;
+        this.categoryName = categoryName;
+    }
 }
