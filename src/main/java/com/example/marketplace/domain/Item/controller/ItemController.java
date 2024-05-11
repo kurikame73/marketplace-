@@ -22,7 +22,6 @@ public class ItemController {
     public ResponseEntity<Page<ItemDto>> getItems(
             @RequestBody ItemFilterDto itemFilterDto,
             Pageable pageable) {
-
         Page<ItemDto> items = itemService.findItems(itemFilterDto, pageable);
         return ResponseEntity.ok(items);
     }
