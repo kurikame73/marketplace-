@@ -31,6 +31,11 @@ public class ItemService {
                 .brand(itemFilterDto.getBrand())
                 .promotionType(itemFilterDto.getPromotionType())
                 .status(itemFilterDto.getStatus())
+                .registeredDate(itemFilterDto.getRegisteredDate())
+                .recommendation(itemFilterDto.getRecommendation())
+                .discountRate(itemFilterDto.getDiscountRate())
+                .sales(itemFilterDto.getSales())
+                .sortByList(itemFilterDto.getSortByList())
                 .build();
 
         return itemRepository.filteringItem(filter, pageable);

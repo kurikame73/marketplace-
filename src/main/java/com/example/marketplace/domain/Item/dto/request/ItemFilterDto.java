@@ -5,6 +5,10 @@ import com.example.marketplace.domain.Item.entity.PromotionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Sort;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +22,9 @@ public class ItemFilterDto {
     private String brand;
     private PromotionType promotionType;
     private ItemStatus status;
+    private LocalDateTime registeredDate;
+    private Integer recommendation;
+    private Integer sales;
+    private Integer discountRate;
+    private List<Sort.Order> sortByList;
 }

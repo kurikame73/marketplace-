@@ -7,14 +7,17 @@ import com.example.marketplace.domain.Item.entity.QItem;
 import com.example.marketplace.domain.Item.service.ItemFilter;
 import com.example.marketplace.domain.category.entity.QCategory;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,10 +38,40 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         addPromotionTypeFilter(builder, item, filter.getPromotionType());
         addStatusFilter(builder, item, filter.getStatus());
 
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        if (filter.getSortByList() != null && !filter.getSortByList().isEmpty()) {
+            for (Sort.Order order : filter.getSortByList()) {
+                OrderSpecifier<?> orderSpecifier;
+                switch (order.getProperty()) {
+                    case "discountRate":
+                        orderSpecifier = order.isAscending() ? item.discountRate.asc() : item.discountRate.desc();
+                        break;
+                    case "itemPrice":
+                        orderSpecifier = order.isAscending() ? item.itemPrice.asc() : item.itemPrice.desc();
+                        break;
+                    case "registeredDate":
+                        orderSpecifier = order.isAscending() ? item.registeredDate.asc() : item.registeredDate.desc();
+                        break;
+                    case "recommendation":
+                        orderSpecifier = order.isAscending() ? item.recommendation.asc() : item.recommendation.desc();
+                        break;
+                    case "sales":
+                        orderSpecifier = order.isAscending() ? item.sales.asc() : item.sales.desc();
+                        break;
+                    default:
+                        continue; // 또는 예외 처리
+                }
+                orderSpecifiers.add(orderSpecifier);
+            }
+
+        }
+
         List<ItemDto> items = queryFactory
                 .select(Projections.constructor(ItemDto.class,
                         item.id,
                         item.itemName,
+                        item.recommendation,
+                        item.sales,
                         item.promotionStart,
                         item.promotionEnd,
                         item.registeredDate,
@@ -53,7 +86,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .from(item)
                 .join(item.category)
                 .where(builder)
-                .orderBy(item.id.desc())
+                .orderBy(orderSpecifiers.isEmpty() ? new OrderSpecifier[]{item.id.desc()} : orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

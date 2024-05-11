@@ -23,10 +23,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -70,6 +73,10 @@ class ItemServiceTest {
                 .brand("Brand X")
                 .promotionType(PromotionType.WEEK_SPECIAL)
                 .category(category1)
+                .discountRate(10) // 추가
+                .registeredDate(LocalDateTime.now().minusDays(7)) // 추가
+                .sales(1000) // 추가
+                .recommendation(45) // 추가
                 .build();
         itemRepository.save(item1);
 
@@ -79,6 +86,10 @@ class ItemServiceTest {
                 .brand("Brand Y")
                 .promotionType(PromotionType.NONE)
                 .category(category1)
+                .discountRate(0) // 추가
+                .registeredDate(LocalDateTime.now().minusDays(3)) // 추가
+                .sales(2000) // 추가
+                .recommendation(40) // 추가
                 .build();
         itemRepository.save(item2);
 
@@ -89,6 +100,10 @@ class ItemServiceTest {
                 .brand("Brand A")
                 .promotionType(PromotionType.NONE)
                 .category(category2)
+                .discountRate(20) // 추가
+                .registeredDate(LocalDateTime.now().minusDays(10)) // 추가
+                .sales(500) // 추가
+                .recommendation(38) // 추가
                 .build();
         itemRepository.save(item3);
 
@@ -99,6 +114,10 @@ class ItemServiceTest {
                 .promotionType(PromotionType.SEASONAL)
                 .status(ItemStatus.DISCOUNT)
                 .category(category2)
+                .discountRate(30) // 추가
+                .registeredDate(LocalDateTime.now().minusDays(5)) // 추가
+                .sales(800) // 추가
+                .recommendation(22) // 추가
                 .build();
         itemRepository.save(item4);
     }
@@ -218,4 +237,59 @@ class ItemServiceTest {
         assertEquals(PromotionType.SEASONAL, itemDto.getPromotionType());
     }
 
+    @Test
+    void findItems_withSortByDiscountRateDesc() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "discountRate"));
+        ItemFilterDto itemFilterDto = new ItemFilterDto();
+        itemFilterDto.setSortByList(List.of(Sort.Order.desc("discountRate")));
+        Page<ItemDto> result = itemService.findItems(itemFilterDto, pageable);
+
+        ObjectWriter writer = jacksonObjectMapper.writerWithDefaultPrettyPrinter();
+        log.info(writer.writeValueAsString(result));
+
+        List<ItemDto> content = result.getContent();
+        assertThat(content).isSortedAccordingTo(Comparator.comparing(ItemDto::getDiscountRate).reversed());
+    }
+
+    @Test
+    void findItems_withSortByRegisteredDateDesc() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "registeredDate"));
+        ItemFilterDto itemFilterDto = new ItemFilterDto();
+        itemFilterDto.setSortByList(List.of(Sort.Order.desc("registeredDate")));
+        Page<ItemDto> result = itemService.findItems(itemFilterDto, pageable);
+
+        ObjectWriter writer = jacksonObjectMapper.writerWithDefaultPrettyPrinter();
+        log.info(writer.writeValueAsString(result));
+
+        List<ItemDto> content = result.getContent();
+        assertThat(content).isSortedAccordingTo(Comparator.comparing(ItemDto::getRegisteredDate).reversed());
+    }
+
+    @Test
+    void findItems_withSortByItemPriceAsc() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "itemPrice"));
+        ItemFilterDto itemFilterDto = new ItemFilterDto();
+        itemFilterDto.setSortByList(List.of(Sort.Order.asc("itemPrice")));
+        Page<ItemDto> result = itemService.findItems(itemFilterDto, pageable);
+
+        ObjectWriter writer = jacksonObjectMapper.writerWithDefaultPrettyPrinter();
+        log.info(writer.writeValueAsString(result));
+
+        List<ItemDto> content = result.getContent();
+        assertThat(content).isSortedAccordingTo(Comparator.comparing(ItemDto::getItemPrice));
+    }
+
+    @Test
+    void findItems_withSortByRecommendationAsc() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "recommendation"));
+        ItemFilterDto itemFilterDto = new ItemFilterDto();
+        itemFilterDto.setSortByList(List.of(Sort.Order.asc("recommendation")));
+        Page<ItemDto> result = itemService.findItems(itemFilterDto, pageable);
+
+        ObjectWriter writer = jacksonObjectMapper.writerWithDefaultPrettyPrinter();
+        log.info(writer.writeValueAsString(result));
+
+        List<ItemDto> content = result.getContent();
+        assertThat(content).isSortedAccordingTo(Comparator.comparing(ItemDto::getRecommendation));
+    }
 }

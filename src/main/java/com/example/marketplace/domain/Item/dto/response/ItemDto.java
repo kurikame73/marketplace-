@@ -1,12 +1,13 @@
 package com.example.marketplace.domain.Item.dto.response;
 
 import com.example.marketplace.domain.Item.entity.PromotionType;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 public class ItemDto {
     private Long id;
     private String itemName;
+    private Integer recommendation;
+    private Integer sales;
     private LocalDateTime promotionStart;
     private LocalDateTime promotionEnd;
     private LocalDateTime registeredDate;

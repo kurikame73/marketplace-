@@ -54,4 +54,10 @@ public class Item {
 
     @OneToMany(mappedBy = "item")
     private List<Review> reviews;
+
+    // 추천 수
+    private Integer recommendation;
+
+    // 판매량
+    private Integer sales;
 }
