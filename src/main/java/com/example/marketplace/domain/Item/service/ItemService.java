@@ -3,16 +3,21 @@ package com.example.marketplace.domain.Item.service;
 import com.example.marketplace.domain.Item.dto.request.ItemFilterDto;
 import com.example.marketplace.domain.Item.dto.response.ItemDto;
 import com.example.marketplace.domain.Item.repository.ItemRepository;
+import com.example.marketplace.listener.item.ItemRecommendedEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     // 아이템 디테일 조회는 아이템디테일 서비스에서
 
@@ -40,6 +45,12 @@ public class ItemService {
 
         return itemRepository.filteringItem(filter, pageable);
     }
+
+    public void itemRecommendation(Long itemId, Long memberId) {
+        eventPublisher.publishEvent(new ItemRecommendedEvent(itemId, memberId));
+    }
+
+
     // TODO:  찜하기
     // TODO:  상품 리뷰
     // TODO:  아이템 디테일 조회

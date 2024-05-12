@@ -3,6 +3,7 @@ package com.example.marketplace.domain.Item.entity;
 import com.example.marketplace.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class Recommendation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

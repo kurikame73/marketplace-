@@ -7,11 +7,14 @@ import com.example.marketplace.domain.Item.entity.ItemStatus;
 import com.example.marketplace.domain.Item.entity.PromotionType;
 import com.example.marketplace.domain.Item.entity.Recommendation;
 import com.example.marketplace.domain.Item.repository.ItemRepository;
+import com.example.marketplace.domain.Item.repository.RecommendationRepository;
 import com.example.marketplace.domain.category.entity.Category;
 import com.example.marketplace.domain.category.repository.CategoryRepository;
 import com.example.marketplace.domain.config.TestConfig;
 import com.example.marketplace.domain.member.entity.Member;
 import com.example.marketplace.domain.member.repository.MemberRepository;
+import com.example.marketplace.listener.item.ItemRecommendedEvent;
+import com.example.marketplace.listener.item.ItemServiceListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -22,7 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +37,8 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.marketplace.domain.member.entity.QMember.member;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +67,18 @@ class ItemServiceTest {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private RecommendationRepository recommendationRepository;
+
+
+    @Autowired
     private EntityManager em;
+
+    private Long itemId1, itemId2, itemId3, itemId4;
+
+    private Long memberId1, memberId2, memberId3, memberId4;
 
     @BeforeEach
     void setUp() {
@@ -79,10 +97,15 @@ class ItemServiceTest {
         Member member3 = new Member("Member3", "member3@example.com");
         Member member4 = new Member("Member4", "member4@example.com");
 
+
         memberRepository.save(member1);
+        memberId1 = member1.getId();
         memberRepository.save(member2);
+        memberId2 = member2.getId();
         memberRepository.save(member3);
+        memberId3 = member3.getId();
         memberRepository.save(member4);
+        memberId4 = member4.getId();
 
 
 
@@ -98,6 +121,7 @@ class ItemServiceTest {
                 .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item1);
+        itemId1 = item1.getId();
         Recommendation recommendation11 = new Recommendation(member1, item1); // member는 추천한 회원 객체
         item1.getRecommendations().add(recommendation11);
         itemRepository.save(item1);
@@ -114,6 +138,7 @@ class ItemServiceTest {
                 .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item2);
+        itemId2 = item2.getId();
         Recommendation recommendation21 = new Recommendation(member1, item2); // member는 추천한 회원 객체
         Recommendation recommendation22 = new Recommendation(member2, item2); // member는 추천한 회원 객체
         item2.getRecommendations().add(recommendation21);
@@ -134,7 +159,7 @@ class ItemServiceTest {
                 .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item3);
-
+        itemId3 = item3.getId();
         Recommendation recommendation31 = new Recommendation(member1, item3); // member는 추천한 회원 객체
         Recommendation recommendation32 = new Recommendation(member2, item3); // member는 추천한 회원 객체
         Recommendation recommendation33 = new Recommendation(member3, item3); // member는 추천한 회원 객체
@@ -157,10 +182,13 @@ class ItemServiceTest {
                 .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item4);
+        itemId4 = item4.getId();
+
     }
 
     @AfterEach
     void tearDown() {
+        recommendationRepository.deleteAll();
         itemRepository.deleteAll();
         categoryRepository.deleteAll();
         em.clear();
@@ -317,16 +345,26 @@ class ItemServiceTest {
     }
 
     @Test
-    void findItems_withSortByRecommendationAsc() throws JsonProcessingException {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "recommendation"));
-        ItemFilterDto itemFilterDto = new ItemFilterDto();
-        itemFilterDto.setSortByList(List.of(Sort.Order.asc("recommendation")));
-        Page<ItemDto> result = itemService.findItems(itemFilterDto, pageable);
+    void testItemRecommendation() {
+        // Given
+        Member member666 = new Member("Member666", "member666@example.com");
+        memberRepository.save(member666);
+        Item item666 = Item.builder()
+                .itemName("Laptoppp")
+                .itemPrice(10000000)
+                .brand("Brand XY")
+                .promotionType(PromotionType.WEEK_SPECIAL)
+                .recommendations(new HashSet<>())
+                .build();
+        itemRepository.save(item666);
+        Long itemId666 = item666.getId();
 
-        ObjectWriter writer = jacksonObjectMapper.writerWithDefaultPrettyPrinter();
-        log.info(writer.writeValueAsString(result));
+        // When
+        eventPublisher.publishEvent(new ItemRecommendedEvent(itemId666, member666.getId()));
 
-        List<ItemDto> content = result.getContent();
-        assertThat(content).isSortedAccordingTo(Comparator.comparing(ItemDto::getRecommendation));
+        // Then
+        Recommendation recommendation = recommendationRepository.findByMemberId(member666.getId()).orElseThrow();
+        assertEquals(recommendation.getMember().getId(), member666.getId());
+        assertEquals(recommendation.getItem().getId(), itemId666);
     }
 }

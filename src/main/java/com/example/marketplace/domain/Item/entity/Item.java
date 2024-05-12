@@ -59,7 +59,7 @@ public class Item {
     // 추천 수
 //    private Integer recommendation;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private Set<Recommendation> recommendations;
 
     // 판매량

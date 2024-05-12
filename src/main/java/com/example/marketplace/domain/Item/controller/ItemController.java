@@ -1,6 +1,7 @@
 package com.example.marketplace.domain.Item.controller;
 
 import com.example.marketplace.domain.Item.dto.request.ItemFilterDto;
+import com.example.marketplace.domain.Item.dto.request.RecommendationRequestDto;
 import com.example.marketplace.domain.Item.dto.response.ItemDto;
 import com.example.marketplace.domain.Item.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,17 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController {
     private final ItemService itemService;
 
-    @GetMapping
+    @GetMapping("/item-filter")
     public ResponseEntity<Page<ItemDto>> getItems(
             @RequestBody ItemFilterDto itemFilterDto,
             Pageable pageable) {
         Page<ItemDto> items = itemService.findItems(itemFilterDto, pageable);
         return ResponseEntity.ok(items);
+    }
+
+    @PostMapping("/item-recommend")
+    public ResponseEntity<String> recommendItem(@RequestBody RecommendationRequestDto dto) {
+        itemService.itemRecommendation(dto.getItemId(), dto.getMemberId());
+        return ResponseEntity.ok("추천 성공하였음.");
     }
 }
