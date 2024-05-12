@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -56,7 +57,10 @@ public class Item {
     private List<Review> reviews;
 
     // 추천 수
-    private Integer recommendation;
+//    private Integer recommendation;
+
+    @OneToMany(mappedBy = "item")
+    private Set<Recommendation> recommendations;
 
     // 판매량
     private Integer sales;

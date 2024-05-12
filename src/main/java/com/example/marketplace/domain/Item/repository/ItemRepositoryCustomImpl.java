@@ -53,7 +53,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                         orderSpecifier = order.isAscending() ? item.registeredDate.asc() : item.registeredDate.desc();
                         break;
                     case "recommendation":
-                        orderSpecifier = order.isAscending() ? item.recommendation.asc() : item.recommendation.desc();
+                        orderSpecifier = order.isAscending() ? item.recommendations.size().asc() : item.recommendations.size().desc();
                         break;
                     case "sales":
                         orderSpecifier = order.isAscending() ? item.sales.asc() : item.sales.desc();
@@ -70,7 +70,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .select(Projections.constructor(ItemDto.class,
                         item.id,
                         item.itemName,
-                        item.recommendation,
+                        item.recommendations.size(),
                         item.sales,
                         item.promotionStart,
                         item.promotionEnd,

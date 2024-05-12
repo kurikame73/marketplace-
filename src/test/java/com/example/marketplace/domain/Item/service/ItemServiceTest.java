@@ -5,10 +5,13 @@ import com.example.marketplace.domain.Item.dto.response.ItemDto;
 import com.example.marketplace.domain.Item.entity.Item;
 import com.example.marketplace.domain.Item.entity.ItemStatus;
 import com.example.marketplace.domain.Item.entity.PromotionType;
+import com.example.marketplace.domain.Item.entity.Recommendation;
 import com.example.marketplace.domain.Item.repository.ItemRepository;
 import com.example.marketplace.domain.category.entity.Category;
 import com.example.marketplace.domain.category.repository.CategoryRepository;
 import com.example.marketplace.domain.config.TestConfig;
+import com.example.marketplace.domain.member.entity.Member;
+import com.example.marketplace.domain.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -27,8 +30,10 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
+import static com.example.marketplace.domain.member.entity.QMember.member;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,6 +50,9 @@ class ItemServiceTest {
 
     @Autowired
     private ObjectMapper jacksonObjectMapper;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     private Category category;
 
@@ -66,6 +74,17 @@ class ItemServiceTest {
         category2.setParent(parentCategory);
         categoryRepository.save(category2);
 
+        Member member1 = new Member("Member1", "member1@example.com");
+        Member member2 = new Member("Member2", "member2@example.com");
+        Member member3 = new Member("Member3", "member3@example.com");
+        Member member4 = new Member("Member4", "member4@example.com");
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+        memberRepository.save(member4);
+
+
 
         Item item1 = Item.builder()
                 .itemName("Laptop")
@@ -76,8 +95,11 @@ class ItemServiceTest {
                 .discountRate(10) // 추가
                 .registeredDate(LocalDateTime.now().minusDays(7)) // 추가
                 .sales(1000) // 추가
-                .recommendation(45) // 추가
+                .recommendations(new HashSet<>())
                 .build();
+        itemRepository.save(item1);
+        Recommendation recommendation11 = new Recommendation(member1, item1); // member는 추천한 회원 객체
+        item1.getRecommendations().add(recommendation11);
         itemRepository.save(item1);
 
         Item item2 = Item.builder()
@@ -89,9 +111,15 @@ class ItemServiceTest {
                 .discountRate(0) // 추가
                 .registeredDate(LocalDateTime.now().minusDays(3)) // 추가
                 .sales(2000) // 추가
-                .recommendation(40) // 추가
+                .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item2);
+        Recommendation recommendation21 = new Recommendation(member1, item2); // member는 추천한 회원 객체
+        Recommendation recommendation22 = new Recommendation(member2, item2); // member는 추천한 회원 객체
+        item2.getRecommendations().add(recommendation21);
+        item2.getRecommendations().add(recommendation22);
+        itemRepository.save(item2);
+
 
         // 카테고리 2에 대한 아이템 생성
         Item item3 = Item.builder()
@@ -103,9 +131,18 @@ class ItemServiceTest {
                 .discountRate(20) // 추가
                 .registeredDate(LocalDateTime.now().minusDays(10)) // 추가
                 .sales(500) // 추가
-                .recommendation(38) // 추가
+                .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item3);
+
+        Recommendation recommendation31 = new Recommendation(member1, item3); // member는 추천한 회원 객체
+        Recommendation recommendation32 = new Recommendation(member2, item3); // member는 추천한 회원 객체
+        Recommendation recommendation33 = new Recommendation(member3, item3); // member는 추천한 회원 객체
+        item3.getRecommendations().add(recommendation31);
+        item3.getRecommendations().add(recommendation32);
+        item3.getRecommendations().add(recommendation33);
+        itemRepository.save(item3);
+
 
         Item item4 = Item.builder()
                 .itemName("Jeans")
@@ -117,7 +154,7 @@ class ItemServiceTest {
                 .discountRate(30) // 추가
                 .registeredDate(LocalDateTime.now().minusDays(5)) // 추가
                 .sales(800) // 추가
-                .recommendation(22) // 추가
+                .recommendations(new HashSet<>())
                 .build();
         itemRepository.save(item4);
     }

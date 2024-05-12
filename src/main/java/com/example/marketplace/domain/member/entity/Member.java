@@ -76,6 +76,11 @@ public class Member {
     @Embedded
     private OauthId oauthId;
 
+    public Member(String loginId, String email) {
+        this.loginId = loginId;
+        this.email = email;
+    }
+
     public static Member createMember(CreateMemberRequestDto dto) {
         Member member = new Member();
         member.loginId = dto.getLoginId();
