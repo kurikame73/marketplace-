@@ -39,10 +39,7 @@ public class ItemDetailRepositoryCustomImpl implements ItemDetailRepositoryCusto
                     .from(itemDetail)
                     .where(itemDetail.id.eq(dto.getId()))
                     .fetch();
-            rawImageUrls.forEach(item -> log.info("Image URL type: {}", item.getClass().getName()));
 
-
-            // 타입 체크를 통해 안전하게 List<String>으로 변환
             List<String> imageUrls = rawImageUrls.stream()
                     .filter(obj -> obj instanceof String)
                     .map(obj -> (String) obj)
