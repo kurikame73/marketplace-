@@ -1,5 +1,6 @@
 package com.example.marketplace.domain.Item.entity;
 
+import com.example.marketplace.domain.ItemDetail.entity.ItemDetail;
 import com.example.marketplace.domain.category.entity.Category;
 import com.example.marketplace.domain.review.entity.Review;
 import jakarta.persistence.*;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class Item {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
 
@@ -48,6 +49,9 @@ public class Item {
 
     @Enumerated(EnumType.STRING)
     private PromotionType promotionType;
+
+    @OneToOne
+    private ItemDetail itemDetail;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

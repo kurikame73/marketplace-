@@ -2,6 +2,9 @@ package com.example.marketplace.domain.ItemDetail.entity;
 
 import com.example.marketplace.domain.Item.entity.Item;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -9,7 +12,10 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-public class itemDetail {
+@AllArgsConstructor
+@Getter
+@Builder
+public class ItemDetail {
 
     @Id
     @GeneratedValue
@@ -35,6 +41,7 @@ public class itemDetail {
     // 안내 사항 (예: 주의 사항, 보관 방법 등)
     private String notes;
 
+    // TODO:  OneToMany
     // 상품 상세 이미지 URL 리스트
     @ElementCollection
     @CollectionTable(name = "item_detail_images", joinColumns = @JoinColumn(name = "item_detail_id"))
