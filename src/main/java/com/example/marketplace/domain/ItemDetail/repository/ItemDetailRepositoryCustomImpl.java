@@ -45,7 +45,7 @@ public class ItemDetailRepositoryCustomImpl implements ItemDetailRepositoryCusto
                     .map(obj -> (String) obj)
                     .collect(Collectors.toList());
 
-            dto.setDetailImages(imageUrls);;
+            dto.setDetailImages(imageUrls);
         }
         return dto;
     }

@@ -68,4 +68,9 @@ public class Item {
 
     // 판매량
     private Integer sales;
+
+    public Item(String itemName, Integer itemPrice) {
+        this.itemName = itemName;
+        this.itemPrice = itemPrice;
+    }
 }

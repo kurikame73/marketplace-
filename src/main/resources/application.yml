@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: aws
 
   logging:
     level:
