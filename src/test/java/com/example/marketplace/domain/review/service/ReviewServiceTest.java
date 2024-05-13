@@ -101,7 +101,7 @@ class ReviewServiceTest {
 
 
         // Then
-//        assertNotNull(response);
+        assertNotNull(response);
         assertEquals(memberId1, response.getMemberId());
     }
 }

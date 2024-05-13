@@ -18,11 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-    // 아이템 디테일 조회는 아이템디테일 서비스에서
-
-    // 상품 리뷰 노출은 리뷰 서비스에서
-
     // 쿠폰 받기는 쿠폰 서비스에서
 
     // 찜하기는 위시리스트 서비스에서
@@ -50,8 +45,5 @@ public class ItemService {
         eventPublisher.publishEvent(new ItemRecommendedEvent(itemId, memberId));
     }
 
-
     // TODO:  찜하기
-    // TODO:  상품 리뷰
-    // TODO:  아이템 디테일 조회
 }
