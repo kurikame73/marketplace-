@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final ApplicationEventPublisher eventPublisher;
-    // 쿠폰 받기는 쿠폰 서비스에서
 
-    // 찜하기는 위시리스트 서비스에서
     public Page<ItemDto> findItems(ItemFilterDto itemFilterDto, Pageable pageable) {
         ItemFilter filter = new ItemFilter.ItemFilterBuilder()
                 .categoryId(itemFilterDto.getCategoryId())
@@ -44,6 +42,4 @@ public class ItemService {
     public void itemRecommendation(Long itemId, Long memberId) {
         eventPublisher.publishEvent(new ItemRecommendedEvent(itemId, memberId));
     }
-
-    // TODO:  찜하기
 }
