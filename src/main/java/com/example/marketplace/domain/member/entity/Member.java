@@ -1,5 +1,6 @@
 package com.example.marketplace.domain.member.entity;
 
+import com.example.marketplace.domain.cart.entity.Cart;
 import com.example.marketplace.domain.member.dto.request.AddInformationMemberRequestDto;
 import com.example.marketplace.domain.member.dto.request.ChangeMemberInfoRequestDto;
 import com.example.marketplace.domain.member.dto.request.ChangePasswordRequestDto;
@@ -70,8 +71,8 @@ public class Member {
 //    @OneToOne
 //    private Wishlist wishlist;
 //
-//    @OneToOne
-//    private Cart cart;
+    @OneToOne
+    private Cart cart;
 
     @Embedded
     private OauthId oauthId;
@@ -87,6 +88,7 @@ public class Member {
         member.name = dto.getMemberName();
         member.email = dto.getEmail();
         member.password = dto.getPassword();
+        member.cart = new Cart();
         return member;
     }
 
