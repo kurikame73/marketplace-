@@ -11,6 +11,8 @@ import com.example.marketplace.domain.order.entity.Order;
 import com.example.marketplace.domain.order.entity.OrderStatus;
 import com.example.marketplace.domain.order.repository.OrderRepository;
 import com.example.marketplace.domain.payment.dto.request.PaymentRequestDto;
+import com.example.marketplace.domain.payment.entity.Payment;
+import com.example.marketplace.domain.payment.repository.PaymentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class PaymentService {
     private final ItemRepository itemRepository;
     private final CouponRepository couponRepository;
     private final CartRepository cartRepository;
+    private final PaymentRepository paymentRepository;
 
     public void processPayment(PaymentRequestDto dto) {
         // 검증
@@ -56,6 +59,7 @@ public class PaymentService {
         cart.clearItems();
         coupon.markAsUsed();
 
+        paymentRepository.save(Payment.createPayment(finalPrice, dto.getPaymentMethod()));
         couponRepository.save(coupon);
         orderRepository.save(order);
         cartRepository.save(cart);
