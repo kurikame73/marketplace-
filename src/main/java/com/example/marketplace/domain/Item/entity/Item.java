@@ -73,4 +73,11 @@ public class Item {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
     }
+
+    public void decreaseQuantity(Integer amount) {
+        if (this.stockQuantity < amount) {
+            throw new IllegalStateException("재고 부족.");
+        }
+        this.stockQuantity -= amount;
+    }
 }

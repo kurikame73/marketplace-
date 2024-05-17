@@ -22,8 +22,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @OneToOne(mappedBy = "cart")
     private Member member;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
@@ -42,5 +41,26 @@ public class Cart {
 
     public void clearItems() {
         cartItems.clear();
+    }
+
+    public Double calculateTotalPrice(Double couponDiscountRate) {
+        double totalPrice = 0.0;
+        for (CartItem cartItem : cartItems) {
+            Item item = cartItem.getItem();
+            Double itemPrice = Double.valueOf(item.getItemPrice());
+
+            // 상품 자체할인 가격 계산
+            Double discountRate = item.getDiscountRate() / 100.0;
+            Double finalPrice = itemPrice - (itemPrice * discountRate);
+
+            // 최종 가격에 수량 곱하기
+            totalPrice += finalPrice * cartItem.getQuantity();
+        }
+
+        // 쿠폰 할인율 적용 (최종 가격에서 쿠폰 할인율만큼 추가 할인)
+        double couponDiscount = totalPrice * (couponDiscountRate / 100.0);
+        totalPrice -= couponDiscount;
+
+        return totalPrice;
     }
 }

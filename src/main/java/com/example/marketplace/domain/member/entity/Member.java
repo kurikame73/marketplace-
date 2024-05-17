@@ -5,13 +5,13 @@ import com.example.marketplace.domain.member.dto.request.AddInformationMemberReq
 import com.example.marketplace.domain.member.dto.request.ChangeMemberInfoRequestDto;
 import com.example.marketplace.domain.member.dto.request.ChangePasswordRequestDto;
 import com.example.marketplace.domain.member.dto.request.CreateMemberRequestDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.marketplace.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -65,13 +65,13 @@ public class Member {
 //    @OneToMany(fetch = FetchType.LAZY)
 //    private Set<Coupon> coupons = new HashSet<>();
 //
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private Set<Order> orders = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
 //
 //    @OneToOne
 //    private Wishlist wishlist;
 //
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Cart cart;
 
     @Embedded
@@ -89,6 +89,7 @@ public class Member {
         member.email = dto.getEmail();
         member.password = dto.getPassword();
         member.cart = new Cart();
+        member.orders = new ArrayList<>();
         return member;
     }
 

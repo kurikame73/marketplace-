@@ -5,12 +5,14 @@ import com.example.marketplace.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {
@@ -26,8 +28,10 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    private Double paymentAmount;
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     private LocalDateTime orderDate;
@@ -38,6 +42,12 @@ public class Order {
                 .status(OrderStatus.PENDING)
                 .orderDate(LocalDateTime.now())
                 .member(cart.getMember())
+                .paymentAmount(0.0)
                 .build();
+    }
+
+    public void finishOrder(Double paymentAmount, OrderStatus status) {
+        this.paymentAmount = paymentAmount;
+        this.status = status;
     }
 }
