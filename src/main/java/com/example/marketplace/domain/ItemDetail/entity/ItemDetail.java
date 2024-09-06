@@ -1,6 +1,7 @@
 package com.example.marketplace.domain.ItemDetail.entity;
 
 import com.example.marketplace.domain.Item.entity.Item;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class ItemDetail {
     @Column(name = "item_detail_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "item_id")
     private Item item;
 
@@ -43,6 +44,7 @@ public class ItemDetail {
 
     // TODO:  OneToMany
     // 상품 상세 이미지 URL 리스트
+    @JsonIgnore  // 직렬화 시 제외
     @ElementCollection
     @CollectionTable(name = "item_detail_images", joinColumns = @JoinColumn(name = "item_detail_id"))
     @Column(name = "image_url")

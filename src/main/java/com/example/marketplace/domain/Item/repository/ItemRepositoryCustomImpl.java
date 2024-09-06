@@ -6,12 +6,14 @@ import com.example.marketplace.domain.Item.entity.PromotionType;
 import com.example.marketplace.domain.Item.entity.QItem;
 import com.example.marketplace.domain.Item.service.ItemFilter;
 import com.example.marketplace.domain.category.entity.QCategory;
+import com.example.marketplace.domain.category.repository.CategoryRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,9 +22,11 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Page<ItemDto> filteringItem(ItemFilter filter, Pageable pageable) {
@@ -96,12 +100,15 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .from(item)
                 .where(builder);
 
+        log.info("ItemRepositoryCustom result = {}", items);
+
         return PageableExecutionUtils.getPage(items, pageable, countQuery::fetchCount);
     }
 
     private void addCategoryFilter(BooleanBuilder builder, QItem item, Long categoryId) {
         if (categoryId != null) {
-            builder.and(item.category.id.eq(categoryId));
+            List<Long> categoryIds = categoryRepository.findAllChildCategoryIds(categoryId);
+            builder.and(item.category.id.in(categoryIds));
         }
     }
 
