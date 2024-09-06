@@ -71,7 +71,7 @@ public class Member {
 //    @OneToOne
 //    private Wishlist wishlist;
 //
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cart_id")
     private Cart cart;
 

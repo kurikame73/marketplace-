@@ -32,6 +32,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Import(TestConfig.class)
 @Slf4j
+@ActiveProfiles("test")
 class ItemServiceTest {
 
     @Autowired
