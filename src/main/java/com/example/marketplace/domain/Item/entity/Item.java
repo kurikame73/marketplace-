@@ -4,10 +4,7 @@ import com.example.marketplace.domain.ItemDetail.entity.ItemDetail;
 import com.example.marketplace.domain.category.entity.Category;
 import com.example.marketplace.domain.review.entity.Review;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Slf4j
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,7 +48,7 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private PromotionType promotionType;
 
-    @OneToOne
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private ItemDetail itemDetail;
 
     @ManyToOne
