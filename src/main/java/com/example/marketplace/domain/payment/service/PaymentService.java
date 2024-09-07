@@ -2,6 +2,7 @@ package com.example.marketplace.domain.payment.service;
 
 import com.example.marketplace.domain.Item.entity.Item;
 import com.example.marketplace.domain.Item.repository.ItemRepository;
+import com.example.marketplace.domain.Item.service.ItemService;
 import com.example.marketplace.domain.cart.entity.Cart;
 import com.example.marketplace.domain.cart.entity.CartItem;
 import com.example.marketplace.domain.cart.repository.CartRepository;
@@ -26,6 +27,7 @@ import static com.example.marketplace.domain.coupon.entity.QCoupon.coupon;
 public class PaymentService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
+    private final ItemService itemService;
     private final CouponRepository couponRepository;
     private final CartRepository cartRepository;
     private final PaymentRepository paymentRepository;
@@ -59,11 +61,9 @@ public class PaymentService {
 
         // 성공 시 재고처리
         for (CartItem cartItem : cart.getCartItems()) {
-            Item item = cartItem.getItem();
-            // TODO: kafka
-            item.decreaseQuantity(cartItem.getQuantity());
-            itemRepository.save(item);
+            itemService.decreaseItemQuantity(cartItem.getItem().getId(), cartItem.getQuantity());
         }
+
 
         // 주문 상태 업데이트
         order.finishOrder(finalPrice, OrderStatus.PAID);
