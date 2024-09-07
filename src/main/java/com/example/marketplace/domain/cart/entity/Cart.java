@@ -43,7 +43,7 @@ public class Cart {
         cartItems.clear();
     }
 
-    public Double calculateTotalPrice(Double couponDiscountRate) {
+    public Double calculateTotalPrice() {
         double totalPrice = 0.0;
         for (CartItem cartItem : cartItems) {
             Item item = cartItem.getItem();
@@ -56,10 +56,6 @@ public class Cart {
             // 최종 가격에 수량 곱하기
             totalPrice += finalPrice * cartItem.getQuantity();
         }
-
-        // 쿠폰 할인율 적용 (최종 가격에서 쿠폰 할인율만큼 추가 할인)
-        double couponDiscount = totalPrice * (couponDiscountRate / 100.0);
-        totalPrice -= couponDiscount;
 
         return totalPrice;
     }

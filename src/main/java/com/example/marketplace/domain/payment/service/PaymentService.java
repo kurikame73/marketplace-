@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.marketplace.domain.coupon.entity.QCoupon.coupon;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,11 +37,17 @@ public class PaymentService {
 
         Cart cart = order.getCart();
 
-        // 쿠폰 조회
-        Coupon coupon = couponRepository.findById(dto.getCouponId()).orElseThrow();
-
         // 가격계산
-        Double finalPrice = cart.calculateTotalPrice(coupon.getDiscountRate());
+        Double finalPrice = cart.calculateTotalPrice();
+
+        // 쿠폰 적용
+        if (dto.getCouponId() != null) {
+            Coupon coupon = couponRepository.findById(dto.getCouponId())
+                    .orElseThrow(() -> new EntityNotFoundException("쿠폰을 찾을 수 없습니다. ID: " + dto.getCouponId()));
+            finalPrice = applyDiscount(finalPrice, coupon.getDiscountRate());
+            coupon.markAsUsed();
+            couponRepository.save(coupon);
+        }
 
         // 모듈전송
         boolean paymentSuccessful = true;
@@ -52,16 +60,25 @@ public class PaymentService {
         // 성공 시 재고처리
         for (CartItem cartItem : cart.getCartItems()) {
             Item item = cartItem.getItem();
+            // TODO: kafka
             item.decreaseQuantity(cartItem.getQuantity());
             itemRepository.save(item);
         }
-        order.finishOrder(finalPrice, OrderStatus.PAID);
-        cart.clearItems();
-        coupon.markAsUsed();
 
-        paymentRepository.save(Payment.createPayment(finalPrice, dto.getPaymentMethod()));
-        couponRepository.save(coupon);
+        // 주문 상태 업데이트
+        order.finishOrder(finalPrice, OrderStatus.PAID);
         orderRepository.save(order);
+
+        // 장바구니 비우기
+        cart.clearItems();
         cartRepository.save(cart);
+
+        // 결제 정보 저장
+        paymentRepository.save(Payment.createPayment(finalPrice, dto.getPaymentMethod()));
+    }
+
+    // TODO: 쿠폰 쪽으로
+    private double applyDiscount(double price, double discountRate) {
+        return price * (1 - discountRate);
     }
 }
