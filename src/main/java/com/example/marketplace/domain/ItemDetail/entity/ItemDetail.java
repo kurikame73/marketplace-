@@ -1,6 +1,7 @@
 package com.example.marketplace.domain.ItemDetail.entity;
 
 import com.example.marketplace.domain.Item.entity.Item;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class ItemDetail {
     @Column(name = "item_detail_id")
     private Long id;
 
+    @JsonBackReference
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "item_id")
     private Item item;

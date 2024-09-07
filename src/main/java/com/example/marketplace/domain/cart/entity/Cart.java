@@ -2,6 +2,7 @@ package com.example.marketplace.domain.cart.entity;
 
 import com.example.marketplace.domain.Item.entity.Item;
 import com.example.marketplace.domain.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
     private Member member;
 

@@ -3,6 +3,8 @@ package com.example.marketplace.domain.Item.entity;
 import com.example.marketplace.domain.ItemDetail.entity.ItemDetail;
 import com.example.marketplace.domain.category.entity.Category;
 import com.example.marketplace.domain.review.entity.Review;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -48,11 +50,13 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private PromotionType promotionType;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private ItemDetail itemDetail;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonIgnoreProperties({"parent", "children", "items"})
     private Category category;
 
     @OneToMany(mappedBy = "item")
