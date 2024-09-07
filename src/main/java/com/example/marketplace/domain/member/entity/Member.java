@@ -6,6 +6,7 @@ import com.example.marketplace.domain.member.dto.request.ChangeMemberInfoRequest
 import com.example.marketplace.domain.member.dto.request.ChangePasswordRequestDto;
 import com.example.marketplace.domain.member.dto.request.CreateMemberRequestDto;
 import com.example.marketplace.domain.order.entity.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,6 +72,7 @@ public class Member {
 //    @OneToOne
 //    private Wishlist wishlist;
 //
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cart_id")
     private Cart cart;
